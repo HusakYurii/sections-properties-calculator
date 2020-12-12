@@ -1,0 +1,17 @@
+{
+  "name": "section-calculator",
+  "version": "1.0.0",
+  "description": "Cross Section Properties Calculator",
+  "main": "index.js",
+  "scripts": {
+    "version": "vue --version",
+    "create-project": "vue create calculator"
+  },
+  "author": "Yurii Husak",
+  "license": "MIT",
+  "dependencies": {
+    "@vue/cli": "^4.5.9",
+    "@vue/cli-service-global": "^4.5.9",
+    "vue": "^2.6.12"
+  }
+}
