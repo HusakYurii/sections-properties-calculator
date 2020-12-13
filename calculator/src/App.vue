@@ -2,25 +2,28 @@
   <div id="app">
     <h1>Cross Sections Properties</h1>
     <div id="calculator">
-        <Canvas></Canvas>
-        <SectionsList></SectionsList>
-        <Results></Results>
+      <Canvas></Canvas>
+      <SectionsList></SectionsList>
+      <Results></Results>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+
 import Canvas from "./components/Canvas.vue";
 import SectionsList from "./components/SectionsList.vue";
 import Results from "./components/Results.vue";
 
-export default {
+@Component({
   components: {
     Canvas,
     SectionsList,
     Results
   }
-}
+})
+export default class App extends Vue {}
 </script>
 
 <style>
