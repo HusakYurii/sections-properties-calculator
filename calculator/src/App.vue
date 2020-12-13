@@ -2,9 +2,20 @@
   <div id="app">
     <h1>Cross Sections Properties</h1>
     <div id="calculator">
-      <Canvas></Canvas>
-      <SectionsList></SectionsList>
-      <Results></Results>
+      <Canvas ref="canvas"></Canvas>
+
+      <SectionsList
+        v-on:addNewSection="showNewSectionPopup"
+        ref="sectionsList"
+      ></SectionsList>
+
+      <Results ref="results"></Results>
+
+      <NewSectionPopup
+        v-on:closePopup="closeSectionPopup"
+        v-on:addSection="addNewSection"
+        ref="newSectionPopup"
+      ></NewSectionPopup>
     </div>
   </div>
 </template>
@@ -12,18 +23,49 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 
-import Canvas from "./components/Canvas.vue";
-import SectionsList from "./components/SectionsList.vue";
+import NewSectionPopup, {
+  SectionPopupInterface,
+} from "./components/NewSectionPopup.vue";
+import SectionsList, {
+  SectionsListInterface,
+} from "./components/SectionsList.vue";
 import Results from "./components/Results.vue";
+import Canvas from "./components/Canvas.vue";
+
+import { getUniqueId, wrapRefsWith } from "./utils/Utils";
+import { SectionData, SectionTypes } from "./data/SectionData";
 
 @Component({
   components: {
     Canvas,
     SectionsList,
-    Results
-  }
+    NewSectionPopup,
+    Results,
+  },
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  public closeSectionPopup(): void {
+    const popup = wrapRefsWith<SectionPopupInterface>(this, "newSectionPopup");
+    popup?.hide();
+  }
+
+  public showNewSectionPopup(): void {
+    const popup = wrapRefsWith<SectionPopupInterface>(this, "newSectionPopup");
+    popup?.show();
+  }
+
+  public addNewSection(): void {
+    this.closeSectionPopup();
+
+    const sectionsList = wrapRefsWith<SectionsListInterface>(
+      this,
+      "sectionsList"
+    );
+    sectionsList?.addNewSection(
+      new SectionData(getUniqueId(), SectionTypes.TubeSection, "Test Section")
+    );
+  }
+}
 </script>
 
 <style>
