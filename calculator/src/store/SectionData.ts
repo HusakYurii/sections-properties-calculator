@@ -1,4 +1,5 @@
 export enum SectionTypes {
+  None,
   RectTubeSection,
   TubeSection,
   LSection,
