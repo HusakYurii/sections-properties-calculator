@@ -69,12 +69,12 @@ export default class App extends Vue {
   ) => void;
 
   // the logic of this class
-  public closePopup(): void {
+  private closePopup(): void {
     this.closeSectionPopup();
     this.setCurrentRequestType(RequestTypes.None);
   }
 
-  public confirmPopup(): void {
+  private confirmPopup(): void {
     this.closeSectionPopup();
     this.setCurrentRequestType(RequestTypes.None);
 
@@ -83,17 +83,17 @@ export default class App extends Vue {
     );
   }
 
-  public onAddSectionRequest(): void {
+  private onAddSectionRequest(): void {
     this.setCurrentRequestType(RequestTypes.AddSection);
     this.showNewSectionPopup();
   }
 
-  public onChangeSectionRequest(id: string): void {
+  private onChangeSectionRequest(id: string): void {
     this.setCurrentRequestType(RequestTypes.ChangeSection);
     this.showNewSectionPopup();
   }
 
-  public onDeleteSectionRequest(id: string): void {
+  private onDeleteSectionRequest(id: string): void {
     this.deleteSection(id);
   }
 

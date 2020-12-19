@@ -55,7 +55,7 @@ export default class SectionsList extends Vue {
   @Getter(GetterTypes.CanAddNewSection) private canAddNewSections!: boolean;
 
   // the logic of this class
-  public get disabled(): boolean {
+  private get disabled(): boolean {
     return this.canAddNewSections === false;
   }
 
