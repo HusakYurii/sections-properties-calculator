@@ -1,6 +1,7 @@
-import { SectionData, SectionTypes } from "./SectionData";
 import Vue from "vue";
 import Vuex from "vuex";
+
+import { SectionData } from "./SectionData";
 
 Vue.use(Vuex);
 
@@ -9,17 +10,20 @@ enum MutationNames {
   DeleteSection = "deleteSection",
   UpdateSectionData = "updateSectionData",
   SetTargetSection = "setTargetSection",
-  SetCurrentRequestType = "setCurrentRequestType"
+  SetCurrentState = "setCurrentState"
 }
 
 enum GetterNames {
   CanAddNewSection = "canAddNewSection",
-  CurrentRequestType = "currentRequestType",
+  CurrentState = "currentState",
   TargetSection = "targetSection",
   Sections = "sections"
 }
 
-export const MutationTypes: Record<keyof typeof MutationNames, MutationNames> = {
+export const MutationTypes: Record<
+  keyof typeof MutationNames,
+  MutationNames
+> = {
   ...MutationNames
 };
 
@@ -31,7 +35,7 @@ export const GetterTypes: Record<keyof typeof GetterNames, GetterNames> = {
   ...GetterNames
 };
 
-export enum RequestTypes {
+export enum StateTypes {
   None,
   AddSection,
   DeleteSection,
@@ -40,8 +44,8 @@ export enum RequestTypes {
 
 export interface StoreState {
   sections: Array<SectionData>;
-  currentRequestType: RequestTypes;
-  targetSection: SectionData; // currently shown section on NewSectionPopup.vue
+  currentState: StateTypes;
+  targetSection: SectionData | null; // currently shown section on NewSectionPopup.vue
   maxSections: number;
 }
 
@@ -49,16 +53,16 @@ export default new Vuex.Store<StoreState>({
   state: {
     maxSections: 15, // to make sections fit in the window
     sections: Array<SectionData>(),
-    currentRequestType: RequestTypes.None,
-    targetSection: new SectionData("", SectionTypes.None, "")
+    currentState: StateTypes.None,
+    targetSection: null
   },
   /** Mutations ===================== */
   mutations: {
     [MutationTypes.SetTargetSection](state, sectionData: SectionData): void {
       state.targetSection = sectionData;
     },
-    [MutationTypes.SetCurrentRequestType](state, requestType: RequestTypes): void {
-      state.currentRequestType = requestType;
+    [MutationTypes.SetCurrentState](state, requestType: StateTypes): void {
+      state.currentState = requestType;
     },
     [MutationTypes.AddSectionData](state, sectionData: SectionData): void {
       state.sections.push(sectionData);
@@ -82,8 +86,8 @@ export default new Vuex.Store<StoreState>({
     [ActionTypes.SetTargetSection](context, sectionData: SectionData): void {
       context.commit(MutationTypes.SetTargetSection, sectionData);
     },
-    [ActionTypes.SetCurrentRequestType](context, requestType: RequestTypes): void {
-      context.commit(MutationTypes.SetCurrentRequestType, requestType);
+    [ActionTypes.SetCurrentState](context, requestType: StateTypes): void {
+      context.commit(MutationTypes.SetCurrentState, requestType);
     },
     [ActionTypes.AddSectionData](context, sectionData: SectionData): void {
       context.commit(MutationTypes.AddSectionData, sectionData);
@@ -103,10 +107,10 @@ export default new Vuex.Store<StoreState>({
     [GetterTypes.Sections](state): Array<SectionData> {
       return state.sections;
     },
-    [GetterTypes.CurrentRequestType](state): RequestTypes {
-      return state.currentRequestType;
+    [GetterTypes.CurrentState](state): StateTypes {
+      return state.currentState;
     },
-    [GetterTypes.TargetSection](state): SectionData {
+    [GetterTypes.TargetSection](state): SectionData | null {
       return state.targetSection;
     },
     [GetterTypes.CanAddNewSection](state): boolean {

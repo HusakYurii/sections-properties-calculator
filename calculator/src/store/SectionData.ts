@@ -1,21 +1,54 @@
-export enum SectionTypes {
-  None,
-  RectTubeSection,
-  TubeSection,
-  LSection,
-  ISection,
-  CSection
+import {
+  BaseGeometryProperties,
+  GeometryProperties
+} from "@/math/GeometryProperties";
+import {
+  BasePhysicsProperties,
+  PhysicsProperties
+} from "@/math/PhysicsProperties";
+import {
+  BaseSectionProperties,
+  SectionProperties
+} from "@/math/SectionProperties";
+import { cloneDeep } from "lodash";
+import { SectionTypes } from "../db/DataBase";
+
+export interface BaseSectionData {
+  psProperties: BasePhysicsProperties;
+  gmProperties: BaseGeometryProperties;
+  csProperties: BaseSectionProperties;
+  type: SectionTypes;
+  name: string;
+  id: string;
 }
 
 export class SectionData {
-  private _type: SectionTypes;
-  private _name: string;
-  private _id: string;
+  protected _phProperties: BasePhysicsProperties;
+  protected _gmProperties: GeometryProperties;
+  protected _seProperties: SectionProperties;
+  protected _type: SectionTypes;
+  protected _name: string;
+  protected _id: string;
 
-  constructor(id: string, type: SectionTypes, name: string) {
-    this._type = type;
-    this._name = name;
-    this._id = id;
+  constructor(data: BaseSectionData) {
+    this._phProperties = new PhysicsProperties(data.psProperties);
+    this._gmProperties = new GeometryProperties(data.gmProperties);
+    this._seProperties = new SectionProperties(data.csProperties);
+    this._type = data.type;
+    this._name = data.name;
+    this._id = data.id;
+  }
+
+  public get phProperties(): BasePhysicsProperties {
+    return cloneDeep(this._phProperties);
+  }
+
+  public get gmProperties(): GeometryProperties {
+    return cloneDeep(this._gmProperties);
+  }
+
+  public get seProperties(): SectionProperties {
+    return cloneDeep(this._seProperties);
   }
 
   public get type(): SectionTypes {
