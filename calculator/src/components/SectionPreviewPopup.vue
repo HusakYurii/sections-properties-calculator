@@ -1,9 +1,16 @@
 <template>
   <div id="overlay" class="hidden">
     <div id="new-section">
-      <button id="close-button" @click.stop="$emit(`closePopup`)">x</button>
-      <button id="confirm-button" @click.stop="$emit(`addSection`)">
+      <button id="close-button" @click.stop="$emit(`close`)">x</button>
+      <button
+        v-if="isNewSection"
+        id="confirm-button"
+        @click.stop="$emit(`confirm`)"
+      >
         Add Section
+      </button>
+      <button v-else id="change-button" @click.stop="$emit(`change`)">
+        Change Section
       </button>
     </div>
   </div>
@@ -11,23 +18,35 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { Getter, Action } from "vuex-class";
+import { Component } from "vue-property-decorator";
 
-export interface SectionPopupInterface {
+import { DataBase, DB, SectionTypes } from "../db/DataBase";
+
+import { GetterTypes, StateTypes } from "../store";
+
+export interface PopupInterface {
   hide: () => void;
   show: () => void;
 }
 
-export default Vue.extend({
-  name: "NewSectionPopup",
-  methods: {
-    hide(): void {
-      this.$el.setAttribute("class", "hidden");
-    },
-    show(): void {
-      this.$el.setAttribute("class", "");
-    },
-  },
-});
+@Component
+export default class SectionPreviewPopup extends Vue implements PopupInterface {
+  @Getter(GetterTypes.CurrentState)
+  private currentRequestType!: StateTypes;
+
+  // the logic of this class
+  hide(): void {
+    this.$el.setAttribute("class", "hidden");
+  }
+  show(): void {
+    this.$el.setAttribute("class", "");
+  }
+
+  private get isNewSection(): boolean {
+    return this.currentRequestType === StateTypes.AddSection;
+  }
+}
 </script>
 
 <style>
@@ -59,6 +78,7 @@ export default Vue.extend({
 
 /* Button common styles */
 #confirm-button,
+#change-button,
 #close-button {
   cursor: pointer;
   color: #ffffff;
@@ -88,8 +108,11 @@ export default Vue.extend({
   outline: none;
 }
 
-/* Confirm to add a new section button */
-#confirm-button {
+/* Confirm - to add a new section button
+   Chanve - to save the cnahed props of the target section data
+ */
+#confirm-button,
+#change-button {
   background-color: #44c767;
   border-radius: 5px;
   width: 100px;
@@ -101,11 +124,17 @@ export default Vue.extend({
   transform: translateX(-50%);
 }
 
-#confirm-button:hover {
+#change-button {
+  width: 150px;
+}
+
+#confirm-button:hover,
+#change-button:hover {
   background-color: #5cbf2a;
 }
 
-#confirm-button:focus {
+#confirm-button:focus,
+#change-button:focus {
   outline: none;
 }
 </style>

@@ -5,65 +5,100 @@
       <Canvas ref="canvas"></Canvas>
 
       <SectionsList
-        v-on:addNewSection="showNewSectionPopup"
+        v-on:addSectionRequest="onAddSectionRequest"
+        v-on:changeSectionRequest="onChangeSectionRequest"
+        v-on:deleteSectionRequest="onDeleteSectionRequest"
         ref="sectionsList"
       ></SectionsList>
 
       <Results ref="results"></Results>
 
-      <NewSectionPopup
-        v-on:closePopup="closeSectionPopup"
-        v-on:addSection="addNewSection"
+      <SectionPreviewPopup
+        v-on:close="closePopup"
+        v-on:confirm="confirmPopup"
         ref="newSectionPopup"
-      ></NewSectionPopup>
+      ></SectionPreviewPopup>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import Vue from "vue";
+import { Getter, Action } from "vuex-class";
+import { Component } from "vue-property-decorator";
 
-import NewSectionPopup, {
-  SectionPopupInterface,
-} from "./components/NewSectionPopup.vue";
-import SectionsList, {
-  SectionsListInterface,
-} from "./components/SectionsList.vue";
+import { PopupInterface } from "./components/SectionPreviewPopup.vue";
+import SectionPreviewPopup from "./components/SectionPreviewPopup.vue";
+import SectionsList from "./components/SectionsList.vue";
 import Results from "./components/Results.vue";
 import Canvas from "./components/Canvas.vue";
 
-import { getUniqueId, wrapRefsWith } from "./utils/Utils";
-import { SectionData, SectionTypes } from "./data/SectionData";
+import { ActionTypes, GetterTypes, StateTypes } from "./store";
+import { SectionData } from "./store/SectionData";
 
+import { getUniqueId, wrapRefsWith } from "./utils/Utils";
+/**
+ * This class acts as a main controller
+ */
 @Component({
   components: {
     Canvas,
     SectionsList,
-    NewSectionPopup,
+    SectionPreviewPopup,
     Results,
   },
 })
 export default class App extends Vue {
-  public closeSectionPopup(): void {
-    const popup = wrapRefsWith<SectionPopupInterface>(this, "newSectionPopup");
+  @Getter(GetterTypes.Sections) private sections!: SectionData[];
+  @Getter(GetterTypes.CanAddNewSection) private canAddNewSection!: boolean;
+
+  @Action(ActionTypes.DeleteSection) private deleteSection!: (
+    id: string
+  ) => void;
+  @Action(ActionTypes.AddSectionData) private addSectionData!: (
+    data: SectionData
+  ) => void;
+  @Action(ActionTypes.UpdateSectionData) private updateSectionData!: (
+    newData: SectionData
+  ) => void;
+  @Action(ActionTypes.SetCurrentState) private setCurrentRequestType!: (
+    type: StateTypes
+  ) => void;
+
+  // the logic of this class
+  private closePopup(): void {
+    this.closeSectionPopup();
+    this.setCurrentRequestType(StateTypes.None);
+  }
+
+  private confirmPopup(): void {
+    this.closeSectionPopup();
+    this.setCurrentRequestType(StateTypes.None);
+  }
+
+  private onAddSectionRequest(): void {
+    this.setCurrentRequestType(StateTypes.AddSection);
+    this.showNewSectionPopup();
+  }
+
+  private onChangeSectionRequest(id: string): void {
+    this.setCurrentRequestType(StateTypes.ChangeSection);
+    this.showNewSectionPopup();
+  }
+
+  private onDeleteSectionRequest(id: string): void {
+    this.setCurrentRequestType(StateTypes.DeleteSection);
+    this.deleteSection(id);
+  }
+
+  private closeSectionPopup(): void {
+    const popup = wrapRefsWith<PopupInterface>(this, "newSectionPopup");
     popup?.hide();
   }
 
-  public showNewSectionPopup(): void {
-    const popup = wrapRefsWith<SectionPopupInterface>(this, "newSectionPopup");
+  private showNewSectionPopup(): void {
+    const popup = wrapRefsWith<PopupInterface>(this, "newSectionPopup");
     popup?.show();
-  }
-
-  public addNewSection(): void {
-    this.closeSectionPopup();
-
-    const sectionsList = wrapRefsWith<SectionsListInterface>(
-      this,
-      "sectionsList"
-    );
-    sectionsList?.addNewSection(
-      new SectionData(getUniqueId(), SectionTypes.TubeSection, "Test Section")
-    );
   }
 }
 </script>

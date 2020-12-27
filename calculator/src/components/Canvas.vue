@@ -6,10 +6,10 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { Component } from "vue-property-decorator";
 
-export default Vue.extend({
-  name: "Canvas"
-});
+@Component
+export default class Canvas extends Vue {}
 </script>
 
 <style>

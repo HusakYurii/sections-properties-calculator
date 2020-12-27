@@ -4,10 +4,10 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { Component } from "vue-property-decorator";
 
-export default Vue.extend({
-  name: "Results"
-});
+@Component
+export default class Results extends Vue {}
 </script>
 
 <style>
