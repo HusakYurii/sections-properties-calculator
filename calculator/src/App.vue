@@ -27,17 +27,14 @@ import Vue from "vue";
 import { Getter, Action } from "vuex-class";
 import { Component } from "vue-property-decorator";
 
-import SectionPreviewPopup, {
-  PopupInterface,
-} from "./components/SectionPreviewPopup.vue";
-
+import { PopupInterface } from "./components/SectionPreviewPopup.vue";
+import SectionPreviewPopup from "./components/SectionPreviewPopup.vue";
 import SectionsList from "./components/SectionsList.vue";
-
 import Results from "./components/Results.vue";
 import Canvas from "./components/Canvas.vue";
 
-import { ActionTypes, GetterTypes, RequestTypes } from "./store";
-import { SectionData, SectionTypes } from "./store/SectionData";
+import { ActionTypes, GetterTypes, StateTypes } from "./store";
+import { SectionData } from "./store/SectionData";
 
 import { getUniqueId, wrapRefsWith } from "./utils/Utils";
 /**
@@ -64,36 +61,33 @@ export default class App extends Vue {
   @Action(ActionTypes.UpdateSectionData) private updateSectionData!: (
     newData: SectionData
   ) => void;
-  @Action(ActionTypes.SetCurrentRequestType) private setCurrentRequestType!: (
-    type: RequestTypes
+  @Action(ActionTypes.SetCurrentState) private setCurrentRequestType!: (
+    type: StateTypes
   ) => void;
 
   // the logic of this class
   private closePopup(): void {
     this.closeSectionPopup();
-    this.setCurrentRequestType(RequestTypes.None);
+    this.setCurrentRequestType(StateTypes.None);
   }
 
   private confirmPopup(): void {
     this.closeSectionPopup();
-    this.setCurrentRequestType(RequestTypes.None);
-
-    this.addSectionData(
-      new SectionData(getUniqueId(), SectionTypes.ISection, "Main Beam")
-    );
+    this.setCurrentRequestType(StateTypes.None);
   }
 
   private onAddSectionRequest(): void {
-    this.setCurrentRequestType(RequestTypes.AddSection);
+    this.setCurrentRequestType(StateTypes.AddSection);
     this.showNewSectionPopup();
   }
 
   private onChangeSectionRequest(id: string): void {
-    this.setCurrentRequestType(RequestTypes.ChangeSection);
+    this.setCurrentRequestType(StateTypes.ChangeSection);
     this.showNewSectionPopup();
   }
 
   private onDeleteSectionRequest(id: string): void {
+    this.setCurrentRequestType(StateTypes.DeleteSection);
     this.deleteSection(id);
   }
 

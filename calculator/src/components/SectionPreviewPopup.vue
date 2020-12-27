@@ -21,7 +21,9 @@ import Vue from "vue";
 import { Getter, Action } from "vuex-class";
 import { Component } from "vue-property-decorator";
 
-import { GetterTypes, RequestTypes } from "../store";
+import { DataBase, DB, SectionTypes } from "../db/DataBase";
+
+import { GetterTypes, StateTypes } from "../store";
 
 export interface PopupInterface {
   hide: () => void;
@@ -30,19 +32,19 @@ export interface PopupInterface {
 
 @Component
 export default class SectionPreviewPopup extends Vue implements PopupInterface {
-  @Getter(GetterTypes.CurrentRequestType)
-  private currentRequestType!: RequestTypes;
+  @Getter(GetterTypes.CurrentState)
+  private currentRequestType!: StateTypes;
 
   // the logic of this class
-  public hide(): void {
+  hide(): void {
     this.$el.setAttribute("class", "hidden");
   }
-  public show(): void {
+  show(): void {
     this.$el.setAttribute("class", "");
   }
 
   private get isNewSection(): boolean {
-    return this.currentRequestType === RequestTypes.AddSection;
+    return this.currentRequestType === StateTypes.AddSection;
   }
 }
 </script>
