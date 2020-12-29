@@ -1,6 +1,8 @@
 export interface BaseSectionProperties {
   x: number; // cm
   y: number; // cm
+  Xo: number; // cm
+  Yo: number; // cm
 
   A: number; // cm2
 
@@ -35,6 +37,8 @@ export class SectionProperties {
   public Wp: number;
   public ix: number;
   public iy: number;
+  public Xo: number;
+  public Yo: number;
 
   constructor(data: BaseSectionProperties) {
     this.x = data.x;
@@ -51,5 +55,7 @@ export class SectionProperties {
     this.Wp = data.Wp;
     this.ix = data.ix;
     this.iy = data.iy;
+    this.Xo = data.Xo;
+    this.Yo = data.Yo;
   }
 }
