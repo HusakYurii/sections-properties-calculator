@@ -4,13 +4,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
-
-@Component
-export default class Canvas extends Vue {}
-</script>
+<script lang="ts" src="./Canvas.ts"></script>
 
 <style>
 #canvas-container {

@@ -58,4 +58,25 @@ export class SectionProperties {
     this.Xo = data.Xo;
     this.Yo = data.Yo;
   }
+
+  public clone(): SectionProperties {
+    return new SectionProperties({
+      x: this.x,
+      y: this.y,
+      A: this.A,
+      Sx: this.Sx,
+      Sy: this.Sy,
+      Ix: this.Ix,
+      Iy: this.Iy,
+      Ip: this.Ip,
+      Ixy: this.Ixy,
+      Wx: this.Wx,
+      Wy: this.Wy,
+      Wp: this.Wp,
+      ix: this.ix,
+      iy: this.iy,
+      Xo: this.Xo,
+      Yo: this.Yo,
+    });
+  }
 }

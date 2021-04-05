@@ -13,11 +13,12 @@
 
       <Results ref="results"></Results>
 
-      <SectionPreviewPopup
+      <OptionsPopup
         v-on:close="closePopup"
-        v-on:confirm="confirmPopup"
-        ref="newSectionPopup"
-      ></SectionPreviewPopup>
+        v-on:confirm="confirmOptions"
+        v-on:change="confirmChangedOptions"
+        ref="optionsPopup"
+      ></OptionsPopup>
     </div>
   </div>
 </template>
@@ -27,16 +28,24 @@ import Vue from "vue";
 import { Getter, Action } from "vuex-class";
 import { Component } from "vue-property-decorator";
 
-import { PopupInterface } from "./components/SectionPreviewPopup.vue";
-import SectionPreviewPopup from "./components/SectionPreviewPopup.vue";
-import SectionsList from "./components/SectionsList.vue";
-import Results from "./components/Results.vue";
-import Canvas from "./components/Canvas.vue";
+// OptionsPopup
+import { PopupInterface } from "./components/popup/OptionsPopup";
+import OptionsPopup from "./components/popup/OptionsPopup.vue";
 
+// SectionsList
+import SectionsList from "./components/list/SectionsList.vue";
+
+// Results
+import Results from "./components/results/Results.vue";
+
+// Canvas
+import Canvas from "./components/canvas/Canvas.vue";
+
+// store
 import { ActionTypes, GetterTypes, StateTypes } from "./store";
 import { SectionData } from "./store/SectionData";
 
-import { getUniqueId, wrapRefsWith } from "./utils/Utils";
+import { wrapRefsWith } from "./utils/Utils";
 /**
  * This class acts as a main controller
  */
@@ -44,61 +53,73 @@ import { getUniqueId, wrapRefsWith } from "./utils/Utils";
   components: {
     Canvas,
     SectionsList,
-    SectionPreviewPopup,
+    OptionsPopup,
     Results,
   },
 })
 export default class App extends Vue {
-  @Getter(GetterTypes.Sections) private sections!: SectionData[];
-  @Getter(GetterTypes.CanAddNewSection) private canAddNewSection!: boolean;
+  @Getter(GetterTypes.Sections) public sections!: SectionData[];
+  @Getter(GetterTypes.CanAddNewSection) public canAddNewSection!: boolean;
 
-  @Action(ActionTypes.DeleteSection) private deleteSection!: (
+  @Action(ActionTypes.DeleteSection) public deleteSection!: (
     id: string
   ) => void;
-  @Action(ActionTypes.AddSectionData) private addSectionData!: (
+  @Action(ActionTypes.AddSectionData) public addSectionData!: (
     data: SectionData
   ) => void;
-  @Action(ActionTypes.UpdateSectionData) private updateSectionData!: (
+  @Action(ActionTypes.UpdateSectionData) public updateSectionData!: (
     newData: SectionData
   ) => void;
-  @Action(ActionTypes.SetCurrentState) private setCurrentRequestType!: (
+  @Action(ActionTypes.SetCurrentState) public setCurrentRequestType!: (
     type: StateTypes
   ) => void;
 
   // the logic of this class
-  private closePopup(): void {
-    this.closeSectionPopup();
+  public closePopup(): void {
+    this._closeOptionsPopup();
     this.setCurrentRequestType(StateTypes.None);
   }
 
-  private confirmPopup(): void {
-    this.closeSectionPopup();
+  public confirmOptions(): void {
+    this._closeOptionsPopup();
+    this.addSectionData(SectionData.createEmpty());
     this.setCurrentRequestType(StateTypes.None);
   }
 
-  private onAddSectionRequest(): void {
+  public confirmChangedOptions(): void {
+    this._closeOptionsPopup();
+    this.setCurrentRequestType(StateTypes.None);
+  }
+
+  public onAddSectionRequest(): void {
     this.setCurrentRequestType(StateTypes.AddSection);
-    this.showNewSectionPopup();
+    this._showOptionsPopup();
   }
 
-  private onChangeSectionRequest(id: string): void {
+  public onChangeSectionRequest(id: string): void {
     this.setCurrentRequestType(StateTypes.ChangeSection);
-    this.showNewSectionPopup();
+    this._showOptionsPopup();
   }
 
-  private onDeleteSectionRequest(id: string): void {
+  public onDeleteSectionRequest(id: string): void {
     this.setCurrentRequestType(StateTypes.DeleteSection);
     this.deleteSection(id);
   }
 
-  private closeSectionPopup(): void {
-    const popup = wrapRefsWith<PopupInterface>(this, "newSectionPopup");
-    popup?.hide();
+  private _closeOptionsPopup(): void {
+    const popup = wrapRefsWith<PopupInterface>(
+      this,
+      "optionsPopup"
+    ) as PopupInterface;
+    popup.hide();
   }
 
-  private showNewSectionPopup(): void {
-    const popup = wrapRefsWith<PopupInterface>(this, "newSectionPopup");
-    popup?.show();
+  private _showOptionsPopup(): void {
+    const popup = wrapRefsWith<PopupInterface>(
+      this,
+      "optionsPopup"
+    ) as PopupInterface;
+    popup.show();
   }
 }
 </script>
