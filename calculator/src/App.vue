@@ -43,7 +43,6 @@ import Canvas from "./components/canvas/Canvas.vue";
 
 // store
 import { ActionTypes, GetterTypes, StateTypes } from "./store";
-import { NullSectionData } from "./store/NullSectionData";
 import { SectionData } from "./store/SectionData";
 
 import { wrapRefsWith } from "./utils/Utils";
@@ -83,7 +82,7 @@ export default class App extends Vue {
 
   public confirmOptions(): void {
     this._closeOptionsPopup();
-    this.addSectionData(new NullSectionData());
+    this.addSectionData(SectionData.createEmpty());
     this.setCurrentRequestType(StateTypes.None);
   }
 

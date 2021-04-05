@@ -8,4 +8,10 @@ export class PhysicsProperties {
   constructor(data: BasePhysicsProperties) {
     this.mass = data.mass;
   }
+
+  public clone(): PhysicsProperties {
+    return new PhysicsProperties({
+      mass: this.mass
+    });
+  }
 }

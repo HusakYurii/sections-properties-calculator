@@ -10,20 +10,19 @@ import {
   BaseSectionProperties,
   SectionProperties
 } from "@/math/SectionProperties";
-import { cloneDeep } from "lodash";
 import { SectionTypes } from "../db/DataBase";
 
 export interface BaseSectionData {
   psProperties: BasePhysicsProperties;
   gmProperties: BaseGeometryProperties;
-  csProperties: BaseSectionProperties;
+  seProperties: BaseSectionProperties;
   type: SectionTypes;
   name: string;
   id: string;
 }
 
 export class SectionData {
-  protected _phProperties: BasePhysicsProperties;
+  protected _psProperties: PhysicsProperties;
   protected _gmProperties: GeometryProperties;
   protected _seProperties: SectionProperties;
   protected _type: SectionTypes;
@@ -31,24 +30,24 @@ export class SectionData {
   protected _id: string;
 
   constructor(data: BaseSectionData) {
-    this._phProperties = new PhysicsProperties(data.psProperties);
+    this._psProperties = new PhysicsProperties(data.psProperties);
     this._gmProperties = new GeometryProperties(data.gmProperties);
-    this._seProperties = new SectionProperties(data.csProperties);
+    this._seProperties = new SectionProperties(data.seProperties);
     this._type = data.type;
     this._name = data.name;
     this._id = data.id;
   }
 
-  public get phProperties(): BasePhysicsProperties {
-    return cloneDeep(this._phProperties);
+  public get psProperties(): PhysicsProperties {
+    return this._psProperties.clone();
   }
 
   public get gmProperties(): GeometryProperties {
-    return cloneDeep(this._gmProperties);
+    return this._gmProperties.clone();
   }
 
   public get seProperties(): SectionProperties {
-    return cloneDeep(this._seProperties);
+    return this._seProperties.clone();
   }
 
   public get type(): SectionTypes {
@@ -61,5 +60,55 @@ export class SectionData {
 
   public get id(): string {
     return this._id;
+  }
+
+  public static copy(sectionData: SectionData): SectionData {
+    return new SectionData({
+      id: sectionData.id,
+      type: sectionData.type,
+      name: sectionData.name,
+      psProperties: sectionData.psProperties,
+      gmProperties: sectionData.gmProperties,
+      seProperties: sectionData.seProperties
+    });
+  }
+
+  public static createEmpty(): SectionData {
+    const id = String(Math.floor(Math.random() * 1000));
+    return new SectionData({
+      type: SectionTypes.None,
+      name: `Empty-${id}`,
+      id,
+      psProperties: {
+        mass: 0
+      },
+      gmProperties: {
+        h: 0,
+        b: 0,
+        s: 0,
+        t: 0,
+        R: 0,
+        r: 0,
+        A: 0
+      },
+      seProperties: {
+        x: 0,
+        y: 0,
+        Xo: 0,
+        Yo: 0,
+        A: 0,
+        Sx: 0,
+        Sy: 0,
+        Ix: 0,
+        Iy: 0,
+        Ip: 0,
+        Ixy: 0,
+        Wx: 0,
+        Wy: 0,
+        Wp: 0,
+        ix: 0,
+        iy: 0
+      }
+    });
   }
 }
