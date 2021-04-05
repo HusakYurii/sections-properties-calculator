@@ -2,13 +2,7 @@
   <div id="results"></div>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import { Component } from "vue-property-decorator";
-
-@Component
-export default class Results extends Vue {}
-</script>
+<script lang="ts" src="./Results.ts"></script>
 
 <style>
 #results {

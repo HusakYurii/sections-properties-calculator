@@ -3,7 +3,7 @@
     <!--  -->
     <div id="add-section">
       <button
-        v-bind:disabled="disabled"
+        v-bind:disabled="!canAddNewSections"
         @click.stop="$emit(`addSectionRequest`)"
       >
         Add new section
@@ -38,32 +38,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import { Getter, Action } from "vuex-class";
-import { Component } from "vue-property-decorator";
-
-import { GetterTypes } from "../store";
-import { SectionData } from "../store/SectionData";
-/**
- * This class works only as a view part to show alist of sections
- * It holds buttons which emit different requests, like add / delete / change section
- */
-@Component
-export default class SectionsList extends Vue {
-  @Getter(GetterTypes.Sections) private sections!: SectionData[];
-  @Getter(GetterTypes.CanAddNewSection) private canAddNewSections!: boolean;
-
-  // the logic of this class
-  private get disabled(): boolean {
-    return this.canAddNewSections === false;
-  }
-
-  private toStringIndex(val: number): string {
-    return String(val + 1);
-  }
-}
-</script>
+<script lang="ts" src="./SectionsList.ts"></script>
 
 <style>
 #sections {

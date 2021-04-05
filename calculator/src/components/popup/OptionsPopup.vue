@@ -16,38 +16,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import { Getter, Action } from "vuex-class";
-import { Component } from "vue-property-decorator";
-
-import { DataBase, DB, SectionTypes } from "../db/DataBase";
-
-import { GetterTypes, StateTypes } from "../store";
-
-export interface PopupInterface {
-  hide: () => void;
-  show: () => void;
-}
-
-@Component
-export default class SectionPreviewPopup extends Vue implements PopupInterface {
-  @Getter(GetterTypes.CurrentState)
-  private currentRequestType!: StateTypes;
-
-  // the logic of this class
-  hide(): void {
-    this.$el.setAttribute("class", "hidden");
-  }
-  show(): void {
-    this.$el.setAttribute("class", "");
-  }
-
-  private get isNewSection(): boolean {
-    return this.currentRequestType === StateTypes.AddSection;
-  }
-}
-</script>
+<script lang="ts" src="./OptionsPopup.ts"></script>
 
 <style>
 #overlay {
