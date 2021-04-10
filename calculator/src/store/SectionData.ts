@@ -17,15 +17,17 @@ export interface BaseSectionData {
   gmProperties: BaseGeometryProperties;
   seProperties: BaseSectionProperties;
   type: SectionTypes;
+  profileType: string;
   name: string;
   id: string;
 }
 
-export class SectionData {
+export class SectionData implements BaseSectionData {
   protected _psProperties: PhysicsProperties;
   protected _gmProperties: GeometryProperties;
   protected _seProperties: SectionProperties;
   protected _type: SectionTypes;
+  protected _profileType: string;
   protected _name: string;
   protected _id: string;
 
@@ -33,6 +35,7 @@ export class SectionData {
     this._psProperties = new PhysicsProperties(data.psProperties);
     this._gmProperties = new GeometryProperties(data.gmProperties);
     this._seProperties = new SectionProperties(data.seProperties);
+    this._profileType = data.profileType;
     this._type = data.type;
     this._name = data.name;
     this._id = data.id;
@@ -48,6 +51,10 @@ export class SectionData {
 
   public get seProperties(): SectionProperties {
     return this._seProperties.clone();
+  }
+
+  public get profileType(): string {
+    return this._profileType;
   }
 
   public get type(): SectionTypes {
@@ -67,6 +74,7 @@ export class SectionData {
       id: sectionData.id,
       type: sectionData.type,
       name: sectionData.name,
+      profileType: sectionData.profileType,
       psProperties: sectionData.psProperties,
       gmProperties: sectionData.gmProperties,
       seProperties: sectionData.seProperties
@@ -74,11 +82,11 @@ export class SectionData {
   }
 
   public static createEmpty(): SectionData {
-    const id = String(Math.floor(Math.random() * 1000));
     return new SectionData({
       type: SectionTypes.None,
-      name: `Empty-${id}`,
-      id,
+      id: "",
+      name: "",
+      profileType: "",
       psProperties: {
         mass: 0
       },

@@ -3,10 +3,10 @@
     <!--  -->
     <div id="add-section">
       <button
-        v-bind:disabled="!canAddNewSections"
-        @click.stop="$emit(`addSectionRequest`)"
+        v-bind:disabled="isButtonDisabled"
+        @click.stop="$emit(`addNewSection`)"
       >
-        Add new section
+        Add Section
       </button>
     </div>
     <!--  -->
@@ -22,13 +22,13 @@
         <div>
           <button
             class="change-section"
-            @click.stop="$emit(`changeSectionRequest`, section.id)"
+            @click.stop="$emit(`changeSection`, section.id)"
           >
             Change
           </button>
           <button
             class="delete-section"
-            @click.stop="$emit(`deleteSectionRequest`, section.id)"
+            @click.stop="$emit(`deleteSection`, section.id)"
           >
             Delete
           </button>

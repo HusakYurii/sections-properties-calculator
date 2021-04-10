@@ -76,7 +76,7 @@ export class SectionProperties {
       ix: this.ix,
       iy: this.iy,
       Xo: this.Xo,
-      Yo: this.Yo,
+      Yo: this.Yo
     });
   }
 }

@@ -5,9 +5,9 @@
       <Canvas ref="canvas"></Canvas>
 
       <SectionsList
-        v-on:addSectionRequest="onAddSectionRequest"
-        v-on:changeSectionRequest="onChangeSectionRequest"
-        v-on:deleteSectionRequest="onDeleteSectionRequest"
+        v-on:addNewSection="onAddNewSection"
+        v-on:changeSection="onChangeSection"
+        v-on:deleteSection="onDeleteSection"
         ref="sectionsList"
       ></SectionsList>
 
@@ -15,8 +15,8 @@
 
       <OptionsPopup
         v-on:close="closePopup"
-        v-on:confirm="confirmOptions"
-        v-on:change="confirmChangedOptions"
+        v-on:confirm="confirmNewSection"
+        v-on:change="confirmChangedSection"
         ref="optionsPopup"
       ></OptionsPopup>
     </div>
@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Getter, Action } from "vuex-class";
+import { Action, Getter } from "vuex-class";
 import { Component } from "vue-property-decorator";
 
 // OptionsPopup
@@ -42,10 +42,16 @@ import Results from "./components/results/Results.vue";
 import Canvas from "./components/canvas/Canvas.vue";
 
 // store
-import { ActionTypes, GetterTypes, StateTypes } from "./store";
+import {
+  ActionTypes,
+  CurrentSectionData,
+  GetterTypes,
+  StateTypes,
+} from "./store";
 import { SectionData } from "./store/SectionData";
 
-import { wrapRefsWith } from "./utils/Utils";
+import { getUniqueId, wrapRefsWith } from "./utils/Utils";
+import { SectionTypes } from "./db/DataBase";
 /**
  * This class acts as a main controller
  */
@@ -58,8 +64,7 @@ import { wrapRefsWith } from "./utils/Utils";
   },
 })
 export default class App extends Vue {
-  @Getter(GetterTypes.Sections) public sections!: SectionData[];
-  @Getter(GetterTypes.CanAddNewSection) public canAddNewSection!: boolean;
+  @Getter(GetterTypes.Sections) public sections!: Array<SectionData>;
 
   @Action(ActionTypes.DeleteSection) public deleteSection!: (
     id: string
@@ -73,53 +78,74 @@ export default class App extends Vue {
   @Action(ActionTypes.SetCurrentState) public setCurrentRequestType!: (
     type: StateTypes
   ) => void;
+  @Action(ActionTypes.UpdateCurrentSectionData)
+  public updateCurrentSectionData!: (
+    props: Partial<CurrentSectionData>
+  ) => void;
 
   // the logic of this class
   public closePopup(): void {
-    this._closeOptionsPopup();
+    wrapRefsWith<PopupInterface>(this, "optionsPopup").hide();
     this.setCurrentRequestType(StateTypes.None);
+    this.updateCurrentSectionData({
+      type: SectionTypes.None,
+      profileType: "",
+      name: "",
+    });
   }
 
-  public confirmOptions(): void {
-    this._closeOptionsPopup();
-    this.addSectionData(SectionData.createEmpty());
+  public confirmNewSection(): void {
+    const popup = wrapRefsWith<PopupInterface>(this, "optionsPopup");
+    const {
+      gmProperties,
+      psProperties,
+      seProperties,
+    } = SectionData.createEmpty();
+
+    this.addSectionData(
+      new SectionData({
+        id: getUniqueId(),
+        name: popup.name,
+        type: popup.type,
+        profileType: popup.profileType,
+        gmProperties,
+        seProperties,
+        psProperties,
+      })
+    );
     this.setCurrentRequestType(StateTypes.None);
-  }
-
-  public confirmChangedOptions(): void {
-    this._closeOptionsPopup();
-    this.setCurrentRequestType(StateTypes.None);
-  }
-
-  public onAddSectionRequest(): void {
-    this.setCurrentRequestType(StateTypes.AddSection);
-    this._showOptionsPopup();
-  }
-
-  public onChangeSectionRequest(id: string): void {
-    this.setCurrentRequestType(StateTypes.ChangeSection);
-    this._showOptionsPopup();
-  }
-
-  public onDeleteSectionRequest(id: string): void {
-    this.setCurrentRequestType(StateTypes.DeleteSection);
-    this.deleteSection(id);
-  }
-
-  private _closeOptionsPopup(): void {
-    const popup = wrapRefsWith<PopupInterface>(
-      this,
-      "optionsPopup"
-    ) as PopupInterface;
     popup.hide();
   }
 
-  private _showOptionsPopup(): void {
-    const popup = wrapRefsWith<PopupInterface>(
-      this,
-      "optionsPopup"
-    ) as PopupInterface;
-    popup.show();
+  public confirmChangedSection(): void {
+    wrapRefsWith<PopupInterface>(this, "optionsPopup").hide();
+    this.setCurrentRequestType(StateTypes.None);
+  }
+
+  public onAddNewSection(): void {
+    this.setCurrentRequestType(StateTypes.AddNewSection);
+    this.updateCurrentSectionData({
+      name: `Section-${Math.floor(Math.random() * 1000)}`,
+      type: SectionTypes.None,
+      profileType: "",
+    });
+    wrapRefsWith<PopupInterface>(this, "optionsPopup").show();
+  }
+
+  public onChangeSection(id: string): void {
+    const targetSection = this.sections.find((section) => section.id === id);
+    this.updateCurrentSectionData({
+      name: targetSection.name,
+      type: targetSection.type,
+      profileType: targetSection.profileType,
+    });
+    this.setCurrentRequestType(StateTypes.ChangeSection);
+    wrapRefsWith<PopupInterface>(this, "optionsPopup").show();
+  }
+
+  public onDeleteSection(id: string): void {
+    this.setCurrentRequestType(StateTypes.DeleteSection);
+    this.deleteSection(id);
   }
 }
 </script>

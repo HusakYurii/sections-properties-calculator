@@ -14,8 +14,6 @@ export type ISections = MakeType<typeof ISections1>;
 
 export enum SectionTypes {
   None,
-  RectTubeSection,
-  TubeSection,
   LSection1, // L beam
   LSection2, // L beam with different length of flanges
   CSection1, // C-Beam
@@ -40,7 +38,7 @@ export const DB: DataBase = {
       case SectionTypes.ISection2:
         return cloneDeep(ISections2);
       default:
-        console.warn(`DataBase: section type${type} does not exist`);
+        console.warn(`DataBase: section type of ${type} does not exist`);
         return null;
     }
   }

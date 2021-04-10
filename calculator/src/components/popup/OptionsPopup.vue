@@ -2,6 +2,39 @@
   <div id="overlay" class="hidden">
     <div id="new-section">
       <button id="close-button" @click.stop="$emit(`close`)">x</button>
+      <div id="selected-options">
+        <div id="image-review">
+          <img :src="imageSrc" />
+        </div>
+        <div id="options-review">
+          <div class="option">
+            <label for="option-name">Section Name</label>
+            <input id="option-name" type="text" v-model="name" />
+          </div>
+          <div class="option">
+            <label for="option-type">Section Type</label>
+            <select id="option-type" v-model="type">
+              <option
+                v-for="[type, name] of sectionTypesMap"
+                :key="type"
+                :value="type"
+                >{{ name }}</option
+              >
+            </select>
+          </div>
+          <div class="option">
+            <label for="option-profileType">Profile Type</label>
+            <select id="option-profileType" v-model="profileType">
+              <option
+                v-for="value of profileTypesMap"
+                :key="value"
+                :value="value"
+                >{{ value }}</option
+              >
+            </select>
+          </div>
+        </div>
+      </div>
       <button
         v-if="isNewSection"
         id="confirm-button"
@@ -75,6 +108,46 @@
 
 #close-button:focus {
   outline: none;
+}
+
+/* Preview section */
+#selected-options {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: space-evenly;
+}
+
+#image-review {
+  width: 300px;
+  height: 300px;
+}
+
+#image-review > img {
+  width: 100%;
+  height: 100%;
+}
+
+#options-review {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+}
+
+.option {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  margin: 5px 0px;
+}
+
+.option > * {
+  width: 160px;
 }
 
 /* Confirm - to add a new section button
