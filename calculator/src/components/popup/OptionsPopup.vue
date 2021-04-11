@@ -9,11 +9,15 @@
         <div id="options-review">
           <div class="option">
             <label for="option-name">Section Name</label>
-            <input id="option-name" type="text" v-model="name" />
+            <input
+              id="option-name"
+              type="text"
+              v-model="currentSectionData.name"
+            />
           </div>
           <div class="option">
             <label for="option-type">Section Type</label>
-            <select id="option-type" v-model="type">
+            <select id="option-type" v-model="currentSectionData.type">
               <option
                 v-for="[type, name] of sectionTypesMap"
                 :key="type"
@@ -24,7 +28,10 @@
           </div>
           <div class="option">
             <label for="option-profileType">Profile Type</label>
-            <select id="option-profileType" v-model="profileType">
+            <select
+              id="option-profileType"
+              v-model="currentSectionData.profileType"
+            >
               <option
                 v-for="value of profileTypesMap"
                 :key="value"

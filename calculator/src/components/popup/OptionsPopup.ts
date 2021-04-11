@@ -1,42 +1,41 @@
 import Vue from "vue";
 import { Getter } from "vuex-class";
-import { Component, Watch } from "vue-property-decorator";
+import { Component } from "vue-property-decorator";
 
-import { CurrentSectionData, GetterTypes, StateTypes } from "../../store";
+import { GetterTypes, StateTypes } from "../../store";
 import { imagesMap } from "./imagesMap";
 import { SectionTypes } from "@/db/DataBase";
 import { sectionTypesMap } from "./sectionTypesMap";
 import { getProfileTypes } from "./profilesTypesMap";
+import { SectionData } from "@/store/SectionData";
+
+import { GeometryProperties } from "../../math/GeometryProperties";
+import { PhysicsProperties } from "../../math/PhysicsProperties";
+import { SectionProperties } from "../../math/SectionProperties";
 
 export interface PopupInterface {
     hide: () => void;
     show: () => void;
-
-    name: string;
-    profileType: string;
-    type: SectionTypes;
+    setCurrentSectionData: (data: SectionData) => void;
+    getCurrentSectionData: () => SectionData;
+    resetCurrentSectionData: () => void;
 }
 
 @Component
 export default class OptionsPopup extends Vue implements PopupInterface {
     @Getter(GetterTypes.CurrentState)
     public currentStateType!: StateTypes;
-    @Getter(GetterTypes.CurrentSectionData)
-    public currentSectionData!: CurrentSectionData;
 
-    // watch CurrentSectionData in the store
-    @Watch('currentSectionData', { immediate: true, deep: true })
-    onSectionChanged(newData: CurrentSectionData) {
-        this.name = newData.name;
-        this.profileType = newData.profileType;
-        this.type = newData.type;
-    }
+    public currentSectionData: SectionData = new SectionData({
+        profileType: "",
+        name: "",
+        id: "",
+        type: SectionTypes.None,
+        gmProperties: Object.freeze(GeometryProperties.empty()),
+        psProperties: Object.freeze(PhysicsProperties.empty()),
+        seProperties: Object.freeze(SectionProperties.empty())
+    });
 
-    public name = "";
-    public profileType = "";
-    public type: SectionTypes = SectionTypes.None;
-
-    // the logic of this class
     public hide(): void {
         this.$el.setAttribute("class", "hidden");
     }
@@ -45,12 +44,40 @@ export default class OptionsPopup extends Vue implements PopupInterface {
         this.$el.setAttribute("class", "");
     }
 
+    public setCurrentSectionData(data: SectionData): void {
+        this.currentSectionData = data;
+    }
+
+    public getCurrentSectionData(): SectionData {
+        return new SectionData({
+            id: this.currentSectionData.id,
+            type: this.currentSectionData.type,
+            name: this.currentSectionData.name,
+            profileType: this.currentSectionData.profileType,
+            gmProperties: this.currentSectionData.gmProperties,
+            psProperties: this.currentSectionData.psProperties,
+            seProperties: this.currentSectionData.seProperties
+        });
+    }
+
+    public resetCurrentSectionData(): void {
+        this.setCurrentSectionData(new SectionData({
+            profileType: "",
+            name: "",
+            id: "",
+            type: SectionTypes.None,
+            gmProperties: Object.freeze(GeometryProperties.empty()),
+            psProperties: Object.freeze(PhysicsProperties.empty()),
+            seProperties: Object.freeze(SectionProperties.empty())
+        }));
+    };
+
     public get isNewSection(): boolean {
         return this.currentStateType === StateTypes.AddNewSection;
     }
 
     public get imageSrc(): string {
-        return imagesMap.get(this.type) as string;
+        return imagesMap.get(this.currentSectionData.type) as string;
     }
 
     public get sectionTypesMap(): Array<[SectionTypes, string]> {
@@ -58,6 +85,6 @@ export default class OptionsPopup extends Vue implements PopupInterface {
     }
 
     public get profileTypesMap(): string[] {
-        return getProfileTypes(this.type);
+        return getProfileTypes(this.currentSectionData.type);
     }
 }
