@@ -2,7 +2,7 @@ import { SectionTypes } from "@/db/DataBase";
 import Vue from "vue";
 import Vuex from "vuex";
 
-import { BaseSectionData, SectionData } from "./SectionData";
+import { SectionData } from "./SectionData";
 
 Vue.use(Vuex);
 
@@ -11,7 +11,6 @@ enum MutationNames {
   DeleteSection = "deleteSection",
   UpdateSectionData = "updateSectionData",
   SetCurrentState = "setCurrentState",
-  UpdateCurrentSectionData = "updateCurrentSectionData"
 }
 
 enum GetterNames {
@@ -43,28 +42,18 @@ export enum StateTypes {
   ChangeSection
 }
 
-export type CurrentSectionData = Pick<
-  BaseSectionData,
-  "type" | "profileType" | "name"
->;
 
 export interface StoreState {
   sections: Array<SectionData>;
   currentState: StateTypes;
   maxSections: number;
-  currentSectionData: CurrentSectionData;
 }
 
 export default new Vuex.Store<StoreState>({
   state: {
     maxSections: 15, // to make sections fit in the window
     sections: Array<SectionData>(),
-    currentState: StateTypes.None,
-    currentSectionData: {
-      type: SectionTypes.None,
-      profileType: "",
-      name: ""
-    }
+    currentState: StateTypes.None
   },
   /** Mutations ===================== */
   mutations: {
@@ -81,17 +70,16 @@ export default new Vuex.Store<StoreState>({
       state,
       newSectionData: SectionData
     ): void {
-      const oldSectionData: SectionData = state.sections.find(
+      const oldSectionData = state.sections.find(
         ({ id }) => id === newSectionData.id
-      ) as SectionData;
+      );
+
+      if (!oldSectionData) {
+        throw new Error(`Store: SectionData with id: ${newSectionData.id} doesn't exist!`);
+      }
+
       const index: number = state.sections.indexOf(oldSectionData);
       state.sections.splice(index, 1, newSectionData);
-    },
-    [MutationTypes.UpdateCurrentSectionData](
-      state,
-      props: Partial<CurrentSectionData>
-    ): void {
-      state.currentSectionData = Object.assign(state.currentSectionData, props);
     }
   },
   /** Actions ===================== */
@@ -110,12 +98,6 @@ export default new Vuex.Store<StoreState>({
       newSectionData: SectionData
     ): void {
       context.commit(MutationTypes.UpdateSectionData, newSectionData);
-    },
-    [ActionTypes.UpdateCurrentSectionData](
-      context,
-      props: Partial<CurrentSectionData>
-    ): void {
-      context.commit(MutationTypes.UpdateCurrentSectionData, props);
     }
   },
   /** Getters ======================== */
@@ -128,9 +110,6 @@ export default new Vuex.Store<StoreState>({
     },
     [GetterTypes.MaxSectionsAmount](state): number {
       return state.maxSections;
-    },
-    [GetterTypes.CurrentSectionData](state): CurrentSectionData {
-      return state.currentSectionData;
     }
   }
 });

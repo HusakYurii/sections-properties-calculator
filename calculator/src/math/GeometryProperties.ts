@@ -1,3 +1,5 @@
+import { AbstractProperties } from "./AbstractProperties";
+
 export interface BaseGeometryProperties {
   h: number; // mm
   b: number; // mm
@@ -8,7 +10,7 @@ export interface BaseGeometryProperties {
   A: number; // cm2
 }
 
-export class GeometryProperties {
+export class GeometryProperties extends AbstractProperties implements BaseGeometryProperties {
   public h: number;
   public b: number;
   public s: number;
@@ -18,6 +20,8 @@ export class GeometryProperties {
   public A: number;
 
   constructor(data: BaseGeometryProperties) {
+    super();
+
     this.h = data.h;
     this.b = data.b;
     this.s = data.s;
@@ -36,6 +40,18 @@ export class GeometryProperties {
       R: this.R,
       r: this.r,
       A: this.A
+    });
+  }
+
+  public static empty(): GeometryProperties {
+    return new GeometryProperties({
+      h: 0,
+      b: 0,
+      s: 0,
+      t: 0,
+      R: 0,
+      r: 0,
+      A: 0
     });
   }
 }

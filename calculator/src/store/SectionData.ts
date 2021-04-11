@@ -1,3 +1,4 @@
+import { AbstractProperties } from "@/math/AbstractProperties";
 import {
   BaseGeometryProperties,
   GeometryProperties
@@ -22,23 +23,26 @@ export interface BaseSectionData {
   id: string;
 }
 
-export class SectionData implements BaseSectionData {
+export class SectionData extends AbstractProperties implements BaseSectionData {
+  public type: SectionTypes;
+  public profileType: string;
+  public name: string;
+  public id: string;
+
   protected _psProperties: PhysicsProperties;
   protected _gmProperties: GeometryProperties;
   protected _seProperties: SectionProperties;
-  protected _type: SectionTypes;
-  protected _profileType: string;
-  protected _name: string;
-  protected _id: string;
 
   constructor(data: BaseSectionData) {
+    super();
+
     this._psProperties = new PhysicsProperties(data.psProperties);
     this._gmProperties = new GeometryProperties(data.gmProperties);
     this._seProperties = new SectionProperties(data.seProperties);
-    this._profileType = data.profileType;
-    this._type = data.type;
-    this._name = data.name;
-    this._id = data.id;
+    this.profileType = data.profileType;
+    this.type = data.type;
+    this.name = data.name;
+    this.id = data.id;
   }
 
   public get psProperties(): PhysicsProperties {
@@ -53,35 +57,19 @@ export class SectionData implements BaseSectionData {
     return this._seProperties.clone();
   }
 
-  public get profileType(): string {
-    return this._profileType;
-  }
-
-  public get type(): SectionTypes {
-    return this._type;
-  }
-
-  public get name(): string {
-    return this._name;
-  }
-
-  public get id(): string {
-    return this._id;
-  }
-
-  public static copy(sectionData: SectionData): SectionData {
+  public clone(): SectionData {
     return new SectionData({
-      id: sectionData.id,
-      type: sectionData.type,
-      name: sectionData.name,
-      profileType: sectionData.profileType,
-      psProperties: sectionData.psProperties,
-      gmProperties: sectionData.gmProperties,
-      seProperties: sectionData.seProperties
+      id: this.id,
+      type: this.type,
+      name: this.name,
+      profileType: this.profileType,
+      psProperties: this.psProperties,
+      gmProperties: this.gmProperties,
+      seProperties: this.seProperties
     });
   }
 
-  public static createEmpty(): SectionData {
+  public static empty(): SectionData {
     return new SectionData({
       type: SectionTypes.None,
       id: "",

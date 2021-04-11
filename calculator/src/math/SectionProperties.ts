@@ -1,3 +1,5 @@
+import { AbstractProperties } from "./AbstractProperties";
+
 export interface BaseSectionProperties {
   x: number; // cm
   y: number; // cm
@@ -22,7 +24,7 @@ export interface BaseSectionProperties {
   iy: number; // cm
 }
 
-export class SectionProperties {
+export class SectionProperties extends AbstractProperties implements BaseSectionProperties {
   public x: number;
   public y: number;
   public A: number;
@@ -41,6 +43,8 @@ export class SectionProperties {
   public Yo: number;
 
   constructor(data: BaseSectionProperties) {
+    super();
+
     this.x = data.x;
     this.y = data.y;
     this.A = data.A;
@@ -77,6 +81,15 @@ export class SectionProperties {
       iy: this.iy,
       Xo: this.Xo,
       Yo: this.Yo
+    });
+  }
+
+  static empty(): SectionProperties {
+    return new SectionProperties({
+      x: 0, y: 0, A: 0, Sx: 0,
+      Sy: 0, Ix: 0, Iy: 0, Ip: 0,
+      Ixy: 0, Wx: 0, Wy: 0, Wp: 0,
+      ix: 0, iy: 0, Xo: 0, Yo: 0
     });
   }
 }
