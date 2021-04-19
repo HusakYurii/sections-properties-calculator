@@ -40,16 +40,42 @@
               >
             </select>
           </div>
+          <p>
+            <br />
+
+            TODO
+            <br />
+            <br />
+            1) Когда Section Type меняестся то не сбрасывется значение
+            profileType из обекта
+
+            <br />
+            <br />
+            2)
+            <br />@Watch("currentSectionData.type") <br />
+            public onTypeChanged(): void {<br />
+            this.currentSectionData.profileType = ""; <br />
+            } <br />
+            Изпользовал @Watch теперь проблема - каждый раз когда открываю popup
+            данные устанавливаются по новой и profileType сбрасыветсяб, что не
+            должно происходить
+          </p>
         </div>
       </div>
       <button
         v-if="isNewSection"
         id="confirm-button"
         @click.stop="$emit(`confirm`)"
+        :disabled="isDisabled"
       >
         Add Section
       </button>
-      <button v-else id="change-button" @click.stop="$emit(`change`)">
+      <button
+        v-else
+        id="change-button"
+        @click.stop="$emit(`change`)"
+        :disabled="isDisabled"
+      >
         Change Section
       </button>
     </div>
@@ -163,6 +189,7 @@
 #confirm-button,
 #change-button {
   background-color: #44c767;
+  color: #ffffff;
   border-radius: 5px;
   width: 100px;
   height: 30px;
@@ -185,5 +212,17 @@
 #confirm-button:focus,
 #change-button:focus {
   outline: none;
+}
+
+#confirm-button[disabled]:hover,
+#change-button[disabled]:hover {
+  background-color: #263b4e;
+  color: #bdb6b6;
+}
+
+#confirm-button:disabled,
+#change-button:disabled {
+  background-color: #263b4e;
+  color: #bdb6b6;
 }
 </style>

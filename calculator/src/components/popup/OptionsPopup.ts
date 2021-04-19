@@ -87,4 +87,16 @@ export default class OptionsPopup extends Vue implements PopupInterface {
     public get profileTypesMap(): string[] {
         return getProfileTypes(this.currentSectionData.type);
     }
+
+    public get isDisabled(): boolean {
+        const isEmpty: (val?: string) => boolean = (val = "") => {
+            return val.trim() === "";
+        };
+
+        return (
+            this.currentSectionData.type === SectionTypes.None ||
+            isEmpty(this.currentSectionData.profileType) ||
+            isEmpty(this.currentSectionData.name)
+        );
+    }
 }
