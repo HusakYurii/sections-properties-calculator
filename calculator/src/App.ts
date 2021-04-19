@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { Action, Getter } from "vuex-class";
-import { Component } from "vue-property-decorator";
+import { Component, Ref } from "vue-property-decorator";
 
 // OptionsPopup
 import { PopupInterface } from "./components/popup/OptionsPopup";
@@ -19,7 +19,7 @@ import Canvas from "./components/canvas/Canvas.vue";
 import { ActionTypes, GetterTypes, StateTypes } from "./store";
 import { SectionData } from "./store/SectionData";
 
-import { getUniqueId, wrapRefsWith } from "./utils/Utils";
+import { getUniqueId } from "./utils/Utils";
 import { SectionTypes } from "./db/DataBase";
 
 import { GeometryProperties } from "./math/GeometryProperties";
@@ -51,44 +51,42 @@ export default class App extends Vue {
     @Action(ActionTypes.SetCurrentState) public setCurrentRequestType!: (
         type: StateTypes
     ) => void;
+    @Ref("sectionsList") public sectionsList!: SectionsList;
+    @Ref('optionsPopup') public optionsPopup!: Vue & PopupInterface;
 
     // just close popup without saving any changes
     public closePopup(): void {
-        const popup = wrapRefsWith<PopupInterface>(this, "optionsPopup") as PopupInterface;
-        popup.resetCurrentSectionData();
-        popup.hide();
+        this.optionsPopup.resetCurrentSectionData();
+        this.optionsPopup.hide();
 
         this.setCurrentRequestType(StateTypes.None);
     }
 
     // confirm newly added and modified data
     public confirmNewData(): void {
-        const popup = wrapRefsWith<PopupInterface>(this, "optionsPopup") as PopupInterface;
 
-        this.addSectionData(popup.getCurrentSectionData());
+        this.addSectionData(this.optionsPopup.getCurrentSectionData());
         this.setCurrentRequestType(StateTypes.None);
 
-        popup.resetCurrentSectionData();
-        popup.hide();
+        this.optionsPopup.resetCurrentSectionData();
+        this.optionsPopup.hide();
     }
 
     // confirm existing data which has been modified
     public confirmChangedData(): void {
-        const popup = wrapRefsWith<PopupInterface>(this, "optionsPopup") as PopupInterface;
-        this.updateSectionData(popup.getCurrentSectionData());
+        this.updateSectionData(this.optionsPopup.getCurrentSectionData());
         this.setCurrentRequestType(StateTypes.None);
 
-        popup.resetCurrentSectionData();
-        popup.hide();
+        this.optionsPopup.resetCurrentSectionData();
+        this.optionsPopup.hide();
     }
 
     // add new data which can be modified and saved
     public onAddNewData(): void {
-        const popup = wrapRefsWith<PopupInterface>(this, "optionsPopup") as PopupInterface;
 
         this.setCurrentRequestType(StateTypes.AddNewSection);
 
-        popup.setCurrentSectionData(
+        this.optionsPopup.setCurrentSectionData(
             new SectionData({
                 id: getUniqueId(),
                 profileType: "",
@@ -99,7 +97,7 @@ export default class App extends Vue {
                 seProperties: Object.freeze(SectionProperties.empty()),
             })
         );
-        popup.show();
+        this.optionsPopup.show();
     }
 
     /**
@@ -112,12 +110,10 @@ export default class App extends Vue {
             throw new Error(`App: SectionData does not exist!`);
         }
 
-        const popup = wrapRefsWith<PopupInterface>(this, "optionsPopup") as PopupInterface;
-
         this.setCurrentRequestType(StateTypes.ChangeSection);
 
-        popup.setCurrentSectionData(targetSection.clone())
-        popup.show();
+        this.optionsPopup.setCurrentSectionData(targetSection.clone())
+        this.optionsPopup.show();
     }
 
     /**
