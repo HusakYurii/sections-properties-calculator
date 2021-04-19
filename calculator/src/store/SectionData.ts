@@ -75,36 +75,9 @@ export class SectionData extends AbstractProperties implements BaseSectionData {
       id: "",
       name: "",
       profileType: "",
-      psProperties: {
-        mass: 0
-      },
-      gmProperties: {
-        h: 0,
-        b: 0,
-        s: 0,
-        t: 0,
-        R: 0,
-        r: 0,
-        A: 0
-      },
-      seProperties: {
-        x: 0,
-        y: 0,
-        Xo: 0,
-        Yo: 0,
-        A: 0,
-        Sx: 0,
-        Sy: 0,
-        Ix: 0,
-        Iy: 0,
-        Ip: 0,
-        Ixy: 0,
-        Wx: 0,
-        Wy: 0,
-        Wp: 0,
-        ix: 0,
-        iy: 0
-      }
+      psProperties: PhysicsProperties.empty(),
+      gmProperties: GeometryProperties.empty(),
+      seProperties: SectionProperties.empty()
     });
   }
 }
